@@ -1,0 +1,30 @@
+{
+  "name": "zapier-erpnext",
+  "version": "0.0.1",
+  "description": "Zapier App to automate ERPNext.",
+  "homepage": "https://github.com/alyf/zapier-erpnext",
+  "author": "Raffael Meyer <raffael@alyf.de>",
+  "repository": "alyf/zapier-erpnext",
+  "license": "GPL-3.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --recursive",
+    "lint": "node_modules/.bin/eslint ."
+  },
+  "engines": {
+    "node": "8.10.0",
+    "npm": ">=5.6.0"
+  },
+  "dependencies": {
+    "zapier-platform-core": "7.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.6.0",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "mocha": "^5.2.0",
+    "nock": "^9.6.1",
+    "prettier": "^1.14.3",
+    "should": "^13.2.0"
+  }
+}
