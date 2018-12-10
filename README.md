@@ -77,6 +77,10 @@ When you run `zapier env 0.0.1` it should look similar to this:
 
 Your app is ready to start. Head over to zapier.com and [create a new Zap](https://zapier.com/app/editor/).
 
+### Contact
+
+[Alyf.de](https://alyf.de) / [raffael@alyf.de](mailto:raffael@alyf.de)
+
 ### License
 
 Copyright (C) 2018 Raffael Meyer <raffael@alyf.de>
