@@ -191,7 +191,6 @@ module.exports = class Lead extends Plugin {
         key: 'territory',
         label: 'Territory',
         choices: choices[3],
-        default: 'All Territories',
       },
       {
         key: 'industry',
