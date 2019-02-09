@@ -77,6 +77,10 @@ When you run `zapier env 0.0.1` it should look similar to this:
 
 Your app is ready to start. Head over to zapier.com and [create a new Zap](https://zapier.com/app/editor/).
 
+### Compatibility
+
+* Dates must be passed as strings of form `YYYY-MM-DD`.
+
 ### Contact
 
 [Alyf.de](https://alyf.de) / [raffael@alyf.de](mailto:raffael@alyf.de)

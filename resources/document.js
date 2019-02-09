@@ -30,7 +30,7 @@ const {
 const typemap = {
   Data: 'string',
   Datetime: 'datetime',
-  Date: 'datetime',
+  Date: 'string', // for example, 2019-02-28
   'Small Text': 'text',
   'Text Editor': 'text',
   'Long Text': 'text',
