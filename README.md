@@ -1,5 +1,7 @@
 [Zapier](https://zapier.com) App to automate [ERPNext](https://erpnext.com). Deploy this app to Zapier and connect thousands of other apps to your ERP-System, for example, Google Forms, Calendly or Stripe. At the moment, creating Leads or Opportunities works especially well.
 
+> Tested only on ERPNext Version 11
+
 ![Zapier Screenshot](/img/zap_trigger.png)
 
 # Getting started
