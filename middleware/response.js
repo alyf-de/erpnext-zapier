@@ -20,60 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 'use strict';
 
-const catch500s = (response, z) => {
-  if (response.status === 500) {
-    z.console.log(response.json);
-    throw new Error(
-      `500: ERPNext encountered an unexpected condition that prevented it from
-       fulfilling the request.`
-    );
-  }
-  if (response.status > 500) {
-    throw new Error(
-      `${response.status}: ERPNext is aware that it has erred or is incapable
-       of performing the requested method.`
-    );
-  }
-  return response;
-};
-const catch400s = (response, z, bundle) => {
-  if (response.status === 417) {
-    throw new Error(
-      `417: The server did not understand your request.
-      Message from ERPNext: ${response.json._server_messages}`
-    );
-  }
-  if (response.status === 409) {
-    throw new Error(
-      `409: This document seems to exist already: 
-       ${z.JSON.stringify(bundle.inputData)}`
-    );
-  }
-  if (response.status === 404) {
-    throw new Error(
-      `404: The requested resource was not found: ${response.request.url}`
-    );
-  }
-  if (response.status === 403) {
-    z.console.log(
-      '403: ERPNext understood the request but refuses to authorize it.'
-    );
-    /*
-      OAuth token might be expired
-      This will signal Zapier to refresh the credentials and then repeat the failed operation.
-    */
-    throw new z.errors.RefreshAuthError();
-  }
-  if (response.status === 401) {
-    z.console.log('401: You do not have the force with you. Maybe try sudo.');
-    /* This will signal Zapier to refresh the credentials and then repeat the failed operation. */
-    throw new z.errors.RefreshAuthError();
-  }
-  if (response.status >= 400) {
-    throw new Error(`${response.status}: Probably you did something wrong.`);
-  }
-  return response;
-};
 const mustBeJson = response => {
   if (!response.json) {
     throw new Error(
@@ -82,15 +28,39 @@ const mustBeJson = response => {
   }
   return response;
 };
-const mustBe200 = response => {
+
+const mustBe200 = (response, z, bundle) => {
+  if (response.status === 417) {
+    console.error(`${response.json._server_messages}`);
+  }
+  if (response.status === 409) {
+    console.error(
+      `409: This document seems to exist already: 
+       ${z.JSON.stringify(bundle.inputData)}`
+    );
+  }
+  if (response.status === 404) {
+    console.error(
+      `404: The requested resource was not found: ${response.request.url}`
+    );
+  }
+  if (response.status === 401) {
+    throw new z.errors.RefreshAuthError();
+  }
   if (response.status >= 300) {
     throw new Error(
-      `${response.status}: The request was not answered as expected: ${
-        response.content
+      `The request was not answered as expected
+      ----------------------------------------
+      HTTP ${response.status}
+      Request: ${JSON.stringify(response.request, null, 2)}
+      Response: ${
+        reponse.content.json
+          ? JSON.stringify(reponse.content.json, null, 2)
+          : response.content
       }`
     );
   }
   return response;
 };
 
-module.exports = [mustBeJson, catch500s, catch400s, mustBe200];
+module.exports = [mustBeJson, mustBe200];
