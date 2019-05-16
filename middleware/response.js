@@ -54,10 +54,10 @@ const mustBe200 = (response, z, bundle) => {
       HTTP ${response.status}
       Request: ${JSON.stringify(response.request, null, 2)}
       Response: ${
-  response.content.json
-    ? JSON.stringify(response.content.json, null, 2)
-    : response.content
-}`
+        response.content.json
+          ? JSON.stringify(response.content.json, null, 2)
+          : response.content
+      }`
     );
   }
   return response;
