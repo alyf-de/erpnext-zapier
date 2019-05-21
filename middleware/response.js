@@ -44,7 +44,7 @@ const mustBe200 = (response, z, bundle) => {
       `404: The requested resource was not found: ${response.request.url}`
     );
   }
-  if (response.status === 401) {
+  if (response.status === 401 || response.status === 403) {
     throw new z.errors.RefreshAuthError();
   }
   if (response.status >= 300) {
