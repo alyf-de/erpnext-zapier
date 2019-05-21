@@ -50,6 +50,8 @@ const mustBe200 = (response, z, bundle) => {
   if (response.status >= 300) {
     z.console.log(`${response.request.method} ${response.request.url}
       returned HTTP ${response.status}:
+      Headers: ${JSON.stringify(response.request.headers, null, 2)}
+      Params:  ${JSON.stringify(response.request.params, null, 2)}
       Body: ${JSON.stringify(response.request.body, null, 2)}`);
 
     throw new Error(
