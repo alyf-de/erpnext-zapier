@@ -31,16 +31,16 @@ const mustBeJson = response => {
 
 const mustBe200 = (response, z, bundle) => {
   if (response.status === 417) {
-    console.error(`${response.json._server_messages}`);
+    z.console.log(`${response.json._server_messages}`);
   }
   if (response.status === 409) {
-    console.error(
+    z.console.log(
       `409: This document seems to exist already: 
        ${z.JSON.stringify(bundle.inputData)}`
     );
   }
   if (response.status === 404) {
-    console.error(
+    z.console.log(
       `404: The requested resource was not found: ${response.request.url}`
     );
   }
@@ -48,15 +48,12 @@ const mustBe200 = (response, z, bundle) => {
     throw new z.errors.RefreshAuthError();
   }
   if (response.status >= 300) {
-    console.error(`${response.request.method} ${response.request.url}
+    z.console.log(`${response.request.method} ${response.request.url}
       returned HTTP ${response.status}:
       Body: ${JSON.stringify(response.request.body, null, 2)}`);
 
     throw new Error(
-      `${response.request.method} ${response.request.url}
-      Returned HTTP ${response.status}
-      ----------------------------------------
-      Response: ${
+      `Response: ${
         response.json
           ? JSON.stringify(response.json, null, 2)
           : response.content
