@@ -48,14 +48,17 @@ const mustBe200 = (response, z, bundle) => {
     throw new z.errors.RefreshAuthError();
   }
   if (response.status >= 300) {
+    console.error(`${response.request.method} ${response.request.url}
+      returned HTTP ${response.status}:
+      Body: ${JSON.stringify(response.request.body, null, 2)}`);
+
     throw new Error(
-      `The request was not answered as expected
+      `${response.request.method} ${response.request.url}
+      Returned HTTP ${response.status}
       ----------------------------------------
-      HTTP ${response.status}
-      Request: ${JSON.stringify(response.request, null, 2)}
       Response: ${
-        response.content.json
-          ? JSON.stringify(response.content.json, null, 2)
+        response.json
+          ? JSON.stringify(response.json, null, 2)
           : response.content
       }`
     );
