@@ -16,15 +16,15 @@
     "npm": ">=5.6.0"
   },
   "dependencies": {
-    "zapier-platform-core": "7.4.0"
+    "zapier-platform-core": "8.2.1"
   },
   "devDependencies": {
-    "eslint": "^5.13.0",
+    "eslint": "^5.16.0",
     "eslint-config-prettier": "^3.6.0",
-    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-prettier": "^3.1.0",
     "mocha": "^5.2.0",
     "nock": "^9.6.1",
-    "prettier": "^1.16.4",
+    "prettier": "^1.18.2",
     "should": "^13.2.0"
   }
 }

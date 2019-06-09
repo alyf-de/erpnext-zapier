@@ -19,37 +19,27 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 const {
   CLIENT_ID,
-  OAUTH_AUTHORIZE_METHOD,
   OAUTH_TOKEN_METHOD,
   OAUTH_TEST_METHOD,
 } = require('./constants');
 
-const { buildMethodGetRequestObject, getMethod, postMethod } = require('./api');
+const { getAuthorizeRequest, getMethod, postMethod } = require('./api');
 
 module.exports = {
   type: 'oauth2',
   oauth2Config: {
     // Step 1 of the OAuth flow; specify where to send the user to authenticate with your API.
     // Zapier generates the state and redirect_uri
-    authorizeUrl: buildMethodGetRequestObject(OAUTH_AUTHORIZE_METHOD, {
-      client_id: CLIENT_ID,
-      // client_id: '{{bundle.inputData.client_id}}',
-      state: '{{bundle.inputData.state}}',
-      response_type: 'code',
-      scope: 'all',
-      redirect_uri: '{{bundle.inputData.redirect_uri}}',
-    }),
+    authorizeUrl: getAuthorizeRequest(),
     // Step 2 of the OAuth flow; Exchange a code for an access token.
     // This could also use the request shorthand.
     getAccessToken: z => {
       return postMethod(z, OAUTH_TOKEN_METHOD, {
         code: '{{bundle.inputData.code}}',
         client_id: CLIENT_ID,
-        // client_id: '{{bundle.inputData.client_id}}',
         grant_type: 'authorization_code',
         redirect_uri: '{{bundle.inputData.redirect_uri}}',
       }).then(response => {
-        // response.client_id = bundle.inputData.client_id;
         return response;
       });
     },
@@ -59,7 +49,6 @@ module.exports = {
       return postMethod(z, OAUTH_TOKEN_METHOD, {
         refresh_token: '{{bundle.authData.refresh_token}}',
         client_id: CLIENT_ID,
-        // client_id: '{{bundle.authData.client_id}}',
         grant_type: 'refresh_token',
         redirect_uri: '{{bundle.inputData.redirect_uri}}',
       });
@@ -68,22 +57,6 @@ module.exports = {
     autoRefresh: true,
     scope: 'all',
   },
-  // fields: [
-  //   {
-  //     key: 'url',
-  //     label: 'ERPNext URL',
-  //     type: 'string',
-  //     helpText: 'The URL of your ERPNext server',
-  //     required: true,
-  //     inputFormat: 'https://{{input}}',
-  //   },
-  //   {
-  //     key: 'client_id',
-  //     label: 'OAuth2 Client ID',
-  //     type: 'string',
-  //     required: true,
-  //   },
-  // ],
   // The test method allows Zapier to verify that the access token is valid.Zapier will execute this
   // method after the OAuth flow is complete to ensure everything is setup properly.
   test: z => {

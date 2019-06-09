@@ -50,7 +50,7 @@ Authentication
 
 In ERPNext, go to `Setup > Integrations > OAuth Client` and click **New**. (You need to have the *System Manager* role.)
 
-To add a client for Zapier fill in the following details:
+To add a client for Zapier, fill in the following details:
 
 1. App Name: Zapier (or whatever you like)
 2. Redirect URIs: use the Redirect URI from the output above.
@@ -81,7 +81,7 @@ Your app is ready to start. Head over to zapier.com and [create a new Zap](https
 
 ### Compatibility
 
-* Dates must be passed as strings of form `YYYY-MM-DD`.
+* Dates must be passed as strings in ISO format: `YYYY-MM-DD`
 
 ### Contact
 

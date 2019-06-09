@@ -17,7 +17,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 'use strict';
 
-const { BASE_URL, METHOD_ENDPOINT, RESOURCE_ENDPOINT } = require('./constants');
+const {
+  CLIENT_ID,
+  BASE_URL,
+  METHOD_ENDPOINT,
+  RESOURCE_ENDPOINT,
+  OAUTH_AUTHORIZE_ENDPOINT,
+} = require('./constants');
+
 const { uniqueItems } = require('./util');
 
 /**
@@ -187,6 +194,20 @@ const getMethod = (z, dottedPathToMethod, params) => {
     .then(response => response.json);
 };
 
+const getAuthorizeRequest = () => {
+  return {
+    method: 'GET',
+    url: BASE_URL + '/' + OAUTH_AUTHORIZE_ENDPOINT,
+    params: {
+      client_id: CLIENT_ID,
+      state: '{{bundle.inputData.state}}',
+      response_type: 'code',
+      scope: 'all',
+      redirect_uri: '{{bundle.inputData.redirect_uri}}',
+    },
+  };
+};
+
 module.exports = {
   getDocument,
   putDocument,
@@ -196,4 +217,5 @@ module.exports = {
   getMethod,
   postMethod,
   buildMethodGetRequestObject,
+  getAuthorizeRequest,
 };
