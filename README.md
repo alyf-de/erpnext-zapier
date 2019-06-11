@@ -8,25 +8,34 @@
 
 * Clone this repository,
 * Install the [Zapier CLI](https://zapier.com/developer/documentation/v2/getting-started-cli/#installing-the-cli):
+
 ```bash
     npm install -g zapier-platform-cli
     zapier login
 ```
+
 * Install dependencies
+
 ```bash
     npm install
 ```
 * [Deploy this app](https://zapier.com/developer/documentation/v2/getting-started-cli/#deploying-an-app)
+
 ```bash
     zapier push
 ```
+
 * Set the base URL of your ERPNext instance, for example https://demo.erpnext.com (without trailing `/` slash).
+
 ```bash
     zapier env 0.0.1 BASE_URL https://demo.erpnext.com
 ```
-* Get your client ID from ERPNext (details below) an let zapier know about it:
+
+* Get your client ID and secret from ERPNext (details below) an let zapier know about it:
+
 ```bash
     zapier env 0.0.1 CLIENT_ID abcd1234
+    zapier env 0.0.1 CLIENT_SECRET a1b2c3d4
 ```
 
 # Set up oAuth in ERPNext
@@ -62,6 +71,7 @@ Now you should see the `App Client ID`. [Set it as environment variable](https:/
 
 ```bash
 zapier env 0.0.1 CLIENT_ID abcd1234
+zapier env 0.0.1 CLIENT_SECRET a1b2c3d4
 ```
 
 When you run `zapier env 0.0.1` it should look similar to this:
@@ -72,6 +82,7 @@ When you run `zapier env 0.0.1` it should look similar to this:
 ├─────────┼───────────────┼──────────────────────────────┤
 │ 0.0.1   │ BASE_URL      │ https://demo.erpnext.com     │
 │ 0.0.1   │ CLIENT_ID     │ abcd1234                     │
+│ 0.0.1   │ CLIENT_SECRET │ a1b2c3d4                     │
 └─────────┴───────────────┴──────────────────────────────┘
 ```
 

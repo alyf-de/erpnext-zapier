@@ -1,6 +1,6 @@
 /*
 Zapier App to automate ERPNext.
-Copyright(C) 2018 Raffael Meyer <raffael@alyf.de>
+Copyright(C) 2019 Raffael Meyer <raffael@alyf.de>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 const {
   CLIENT_ID,
+  CLIENT_SECRET,
   OAUTH_TOKEN_METHOD,
   OAUTH_TEST_METHOD,
 } = require('./constants');
@@ -37,6 +38,7 @@ module.exports = {
       return postMethod(z, OAUTH_TOKEN_METHOD, {
         code: '{{bundle.inputData.code}}',
         client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
         grant_type: 'authorization_code',
         redirect_uri: '{{bundle.inputData.redirect_uri}}',
       }).then(response => {
@@ -49,6 +51,7 @@ module.exports = {
       return postMethod(z, OAUTH_TOKEN_METHOD, {
         refresh_token: '{{bundle.authData.refresh_token}}',
         client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
         grant_type: 'refresh_token',
         redirect_uri: '{{bundle.inputData.redirect_uri}}',
       });
