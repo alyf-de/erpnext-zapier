@@ -59,20 +59,7 @@ module.exports = {
   },
   // The test method allows Zapier to verify that the access token is valid.Zapier will execute this
   // method after the OAuth flow is complete to ensure everything is setup properly.
-  test: z => {
-    // This method can return any truthy value to indicate the credentials are valid.
-    return getMethod(z, OAUTH_TEST_METHOD).then(response => {
-      if (!response.hasOwnProperty('message')) {
-        // credentials are not valid
-        return false;
-      }
-      return {
-        // return username as connection label (truthy)
-        // will become available in bundle.inputData
-        user: response.message,
-      };
-    });
-  },
-  // assuming "user" is a key returned from the test
-  connectionLabel: '{{bundle.inputData.user}}',
+  test: z => getMethod(z, OAUTH_TEST_METHOD),
+  // OAUTH_TEST_METHOD returns { "message": "user@example.com" }
+  connectionLabel: '{{message}}',
 };
