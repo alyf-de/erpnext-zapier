@@ -1,6 +1,6 @@
 {
   "name": "zapier-erpnext",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Zapier App to automate ERPNext.",
   "homepage": "https://github.com/alyf/zapier-erpnext",
   "author": "Raffael Meyer <raffael@alyf.de>",

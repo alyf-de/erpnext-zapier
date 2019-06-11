@@ -45,15 +45,17 @@ zapier push
 
 ### 4. Set up ERPNext
 
+We'll assume that your ERPNext instance is hosted at https://my-company.alyf.de.
+
 Open ERPNext, create new Social Login Keys:
 
 * Provider: Frappe
 * Client ID, Client Secret: random
 * Base URL: https://alyf.de
 
->The Base URL you enter into ERPNext has to be your Second-Level-Domain (https://alyf.de), even if your ERPNext runs under a subdomain (https://my-company.alyf.de).
+>The Base URL you enter into ERPNext has to be your Second-Level-Domain (for example, https://alyf.de), even if your ERPNext runs under a subdomain (for example, https://my-company.alyf.de).
 
-Get your app's Redirect URI from Zapier:
+Get your app's _Redirect URI_ from Zapier:
 
 ```bash
 zapier describe
@@ -70,9 +72,12 @@ In ERPNext, create a new _OAuth Client_ with Redirect URI from above as _Redirec
 
 ### 5. Set Up the Zapier Environment
 
+Run these commands to put your configuration into the apps environment. Remember to replace the values at the end of each line (`f9a3905f4c`, `ds8fd8vc5xx`, `https://my-company.alyf.de`) with the actual values for your instance.
+
 ```bash
-zapier env 0.0.1 CLIENT_ID f9a3905f4c
-zapier env 0.0.1 BASE_URL https://my-company.alyf.de
+zapier env 0.0.2 CLIENT_ID f9a3905f4c
+zapier env 0.0.2 CLIENT_SECRET ds8fd8vc5xx
+zapier env 0.0.2 BASE_URL https://my-company.alyf.de
 ```
 
 Notice that the Base URL for zapier is the _actual_ URL of your ERPNext server, NOT your Second-Level-Domain.

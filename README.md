@@ -1,7 +1,5 @@
 [Zapier](https://zapier.com) App to automate [ERPNext](https://erpnext.com). Deploy this app to Zapier and connect thousands of other apps to your ERP-System, for example, Google Forms, Calendly or Stripe. At the moment, creating Leads or Opportunities works especially well.
 
-> Tested only on ERPNext Version 11
-
 ![Zapier Screenshot](/img/zap_trigger.png)
 
 # Getting started
@@ -39,6 +37,7 @@
 ```
 
 # Set up oAuth in ERPNext
+
 Please follow Frappe's guide on [How to set up oAuth](https://frappe.io/docs/user/en/guides/integration/how_to_set_up_oauth) in ERPNext.
 
 If this is your first time configuring oAuth you'll need to set your second-level-domain in ERPNext. For example, if your instance runs at https://erp.domain.tld, use https://domain.tld (without the "erp" subdomain). In ERPNext, go to `Setup > Integrations > Social Login Keys`, enter your second-level-domain in the field called "Frappe Server URL" and hit save. (If you don't do this you will later get a 417 ValidationError in Zapier.)
@@ -92,6 +91,7 @@ Your app is ready to start. Head over to zapier.com and [create a new Zap](https
 
 ### Compatibility
 
+* Tested only on ERPNext Version 11
 * Dates must be passed as strings in ISO format: `YYYY-MM-DD`
 
 ### Contact
