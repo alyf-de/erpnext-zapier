@@ -28,6 +28,7 @@ module.exports = {
 
   list: {
     display: {
+      hidden: true,
       label: 'List DocTypes',
       description: `Get a list of DocTypes.`,
     },
@@ -38,6 +39,9 @@ module.exports = {
         }).then(response => {
           return response.map(doc => addId(doc));
         }),
+      sample: {
+        id: 'ToDo',
+      },
     },
   },
 };

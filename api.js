@@ -1,6 +1,7 @@
 /*
 Zapier App to automate ERPNext.
 Copyright (C) 2018  Raffael Meyer
+Copyright (c) 2019  Dokos SAS
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,8 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 'use strict';
 
 const {
-  CLIENT_ID,
-  BASE_URL,
   METHOD_ENDPOINT,
   RESOURCE_ENDPOINT,
   OAUTH_AUTHORIZE_ENDPOINT,
@@ -39,7 +38,10 @@ const getDocument = (z, docType, docName) => {
   return z
     .request({
       method: 'GET',
-      url: BASE_URL + RESOURCE_ENDPOINT + `/${docType}/${docName}`,
+      url:
+        '{{bundle.authData.BASE_URL}}' +
+        RESOURCE_ENDPOINT +
+        `/${docType}/${docName}`,
     })
     .then(response => response.json.data);
 };
@@ -57,7 +59,10 @@ const putDocument = (z, docType, docName, docBody) => {
   return z
     .request({
       method: 'PUT',
-      url: BASE_URL + RESOURCE_ENDPOINT + `/${docType}/${docName}`,
+      url:
+        '{{bundle.authData.BASE_URL}}' +
+        RESOURCE_ENDPOINT +
+        `/${docType}/${docName}`,
       body: docBody,
       headers: { 'Content-Type': 'application/json' },
     })
@@ -75,7 +80,10 @@ const putDocument = (z, docType, docName, docBody) => {
 const deleteDocument = (z, docType, docName) => {
   return z
     .request({
-      url: BASE_URL + RESOURCE_ENDPOINT + `/${docType}/${docName}`,
+      url:
+        '{{bundle.authData.BASE_URL}}' +
+        RESOURCE_ENDPOINT +
+        `/${docType}/${docName}`,
       method: 'DELETE',
     })
     .then(response => response.json.message);
@@ -93,11 +101,16 @@ const postDocument = (z, docType, docBody) => {
   return z
     .request({
       method: 'POST',
-      url: BASE_URL + RESOURCE_ENDPOINT + `/${docType}`,
+      url: '{{bundle.authData.BASE_URL}}' + RESOURCE_ENDPOINT + `/${docType}`,
       body: docBody,
       headers: { 'Content-Type': 'application/json' },
     })
-    .then(response => response.json.data);
+    .then(response => {
+      return response.json.data;
+    })
+    .catch(e => {
+      z.console.log('CREATE ERROR', e);
+    });
 };
 
 /**
@@ -123,7 +136,7 @@ const listDocuments = (z, docType, params) => {
   return z
     .request({
       method: 'GET',
-      url: BASE_URL + RESOURCE_ENDPOINT + `/${docType}`,
+      url: '{{bundle.authData.BASE_URL}}' + RESOURCE_ENDPOINT + `/${docType}`,
       params: {
         // stringify fields so the param will not be duplicated for every field
         fields: JSON.stringify(params.fields) || '["name"]',
@@ -137,7 +150,7 @@ const listDocuments = (z, docType, params) => {
       if (!response.json.hasOwnProperty('data')) {
         throw new Error('Search did not return any data: ' + response.json);
       }
-      return response.json.data;
+      return response.json.data || [];
     });
 };
 
@@ -149,35 +162,17 @@ const listDocuments = (z, docType, params) => {
  * @param   {object} postData            Object containing the data to post
  * @returns {object}                     Parsed json response
  */
-const postMethod = (z, dottedPathToMethod, postData) => {
+const postMethod = (z, baseUrl, dottedPathToMethod, postData) => {
   return z
     .request({
       method: 'POST',
-      url: BASE_URL + METHOD_ENDPOINT + `/${dottedPathToMethod}`,
+      url: baseUrl + METHOD_ENDPOINT + `/${dottedPathToMethod}`,
       body: postData,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     })
     .then(response => response.json);
-};
-
-/**
- * Get data from a whitelisted method.
- *
- * This is a separate function because authorize URL in authentication.js
- * needs only the object returned by this function.
- *
- * @param   {string} dottedPathToMethod  Dotted path to method, e.g. 'frappe.auth.get_logged_user'
- * @param   {object} params              Object containing query parameters
- * @returns {object}                     GET request object
- */
-const buildMethodGetRequestObject = (dottedPathToMethod, params) => {
-  return {
-    method: 'GET',
-    url: BASE_URL + METHOD_ENDPOINT + `/${dottedPathToMethod}`,
-    params: params || {},
-  };
 };
 
 /**
@@ -190,16 +185,23 @@ const buildMethodGetRequestObject = (dottedPathToMethod, params) => {
  */
 const getMethod = (z, dottedPathToMethod, params) => {
   return z
-    .request(buildMethodGetRequestObject(dottedPathToMethod, params))
+    .request({
+      method: 'GET',
+      url:
+        '{{bundle.authData.BASE_URL}}' +
+        METHOD_ENDPOINT +
+        `/${dottedPathToMethod}`,
+      params: params || {},
+    })
     .then(response => response.json);
 };
 
 const getAuthorizeRequest = () => {
   return {
     method: 'GET',
-    url: BASE_URL + '/' + OAUTH_AUTHORIZE_ENDPOINT,
+    url: '{{bundle.inputData.BASE_URL}}' + OAUTH_AUTHORIZE_ENDPOINT,
     params: {
-      client_id: CLIENT_ID,
+      client_id: '{{bundle.inputData.CLIENT_ID}}',
       state: '{{bundle.inputData.state}}',
       response_type: 'code',
       scope: 'all',
@@ -216,6 +218,5 @@ module.exports = {
   listDocuments,
   getMethod,
   postMethod,
-  buildMethodGetRequestObject,
   getAuthorizeRequest,
 };

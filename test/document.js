@@ -30,7 +30,15 @@ zapier.tools.env.inject();
 
 describe('Document Resource', () => {
   it('should run get', done => {
-    const bundle = { inputData: { name: 'TEST-00001', doctype: 'Test' } };
+    const bundle = {
+      inputData: {
+        name: 'TEST-00001',
+        doctype: 'Test',
+      },
+      authData: {
+        BASE_URL: process.env.BASE_URL,
+      },
+    };
 
     nock(process.env.BASE_URL, {
       reqheaders: {
@@ -41,9 +49,7 @@ describe('Document Resource', () => {
       },
     })
       .get(
-        `${RESOURCE_ENDPOINT}/${bundle.inputData.doctype}/${
-          bundle.inputData.name
-        }`
+        `${RESOURCE_ENDPOINT}/${bundle.inputData.doctype}/${bundle.inputData.name}`
       )
       .reply(200, { data: { name: bundle.inputData.name } });
 
@@ -66,6 +72,7 @@ describe('Document Resource', () => {
         limit_page_length: 20,
       },
       authData: {
+        BASE_URL: process.env.BASE_URL,
         access_token: 'a_token',
         refresh_token: 'a_refresh_token',
       },
@@ -120,6 +127,7 @@ describe('Webhook', () => {
         triggerEvent: 'after_insert',
       },
       authData: {
+        BASE_URL: process.env.BASE_URL,
         access_token: 'a_token',
       },
       targetUrl: 'https://example.org',
@@ -175,6 +183,7 @@ describe('Webhook', () => {
         name: 'Test-after_insert',
       },
       authData: {
+        BASE_URL: process.env.BASE_URL,
         access_token: 'a_token',
       },
     };
@@ -209,6 +218,7 @@ describe('Webhook', () => {
         webhookData: ['name', 'test', 'test'],
       },
       authData: {
+        BASE_URL: process.env.BASE_URL,
         access_token: 'a_token',
       },
       targetUrl: 'https://example.org',

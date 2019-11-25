@@ -98,6 +98,11 @@ Your app is ready to start. Head over to zapier.com and [create a new Zap](https
 
 [Alyf.de](https://alyf.de) / [raffael@alyf.de](mailto:raffael@alyf.de)
 
+### Contributors
+
+* @barredterra
+* @chdecultot
+
 ### License
 
 Copyright (C) 2018 Raffael Meyer <raffael@alyf.de>

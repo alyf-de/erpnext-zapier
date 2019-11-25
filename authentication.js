@@ -17,52 +17,62 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 'use strict';
 
-const {
-  CLIENT_ID,
-  CLIENT_SECRET,
-  OAUTH_TOKEN_METHOD,
-  OAUTH_TEST_METHOD,
-} = require('./constants');
+const { OAUTH_TOKEN_METHOD, OAUTH_TEST_METHOD } = require('./constants');
 
 const { getAuthorizeRequest, getMethod, postMethod } = require('./api');
 
 module.exports = {
   type: 'oauth2',
+  fields: [
+    {
+      computed: false,
+      key: 'BASE_URL',
+      type: 'string',
+      required: true,
+      helpText:
+        'The base URL of your ERPNext instance.\nFor example https://demo.erpnext.com (without trailing slash).',
+    },
+    {
+      computed: false,
+      key: 'CLIENT_ID',
+      type: 'string',
+      required: true,
+      helpText: 'Your OAuth Client ID for this app',
+    },
+    {
+      computed: false,
+      key: 'CLIENT_SECRET',
+      type: 'password',
+      required: true,
+      helpText: 'Your Oauth Client Secret for this app',
+    },
+  ],
   oauth2Config: {
-    // Step 1 of the OAuth flow; specify where to send the user to authenticate with your API.
-    // Zapier generates the state and redirect_uri
     authorizeUrl: getAuthorizeRequest(),
-    // Step 2 of the OAuth flow; Exchange a code for an access token.
-    // This could also use the request shorthand.
-    getAccessToken: z => {
-      return postMethod(z, OAUTH_TOKEN_METHOD, {
-        code: '{{bundle.inputData.code}}',
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
+    getAccessToken: (z, bundle) => {
+      return postMethod(z, bundle.inputData.BASE_URL, OAUTH_TOKEN_METHOD, {
+        code: bundle.inputData.code,
+        client_id: bundle.inputData.CLIENT_ID,
+        client_secret: bundle.inputData.CLIENT_SECRET,
         grant_type: 'authorization_code',
-        redirect_uri: '{{bundle.inputData.redirect_uri}}',
+        redirect_uri: bundle.inputData.redirect_uri,
       }).then(response => {
         return response;
       });
     },
-    // (Optional) If the access token expires after a pre-defined amount of time, you can implement
-    // this method to tell Zapier how to refresh it.
-    refreshAccessToken: z => {
-      return postMethod(z, OAUTH_TOKEN_METHOD, {
-        refresh_token: '{{bundle.authData.refresh_token}}',
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
+    refreshAccessToken: (z, bundle) => {
+      return postMethod(z, bundle.authData.BASE_URL, OAUTH_TOKEN_METHOD, {
+        refresh_token: bundle.authData.refresh_token,
+        client_id: bundle.authData.CLIENT_ID,
+        client_secret: bundle.authData.CLIENT_SECRET,
         grant_type: 'refresh_token',
-        redirect_uri: '{{bundle.inputData.redirect_uri}}',
+        redirect_uri: bundle.inputData.redirect_uri,
       });
     },
-    // If you want Zapier to automatically invoke `refreshAccessToken` on a 401 response, set to true
     autoRefresh: true,
     scope: 'all',
   },
-  // The test method allows Zapier to verify that the access token is valid.Zapier will execute this
-  // method after the OAuth flow is complete to ensure everything is setup properly.
-  test: z => getMethod(z, OAUTH_TEST_METHOD),
   // OAUTH_TEST_METHOD returns { "message": "user@example.com" }
+  test: z => getMethod(z, OAUTH_TEST_METHOD),
   connectionLabel: '{{message}}',
 };

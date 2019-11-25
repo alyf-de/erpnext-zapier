@@ -3,6 +3,7 @@ Generic document resource to manipulate any of ERPNext's DocTypes.
 
 Zapier App to automate ERPNext.
 Copyright (C) 2018  Raffael Meyer
+Copyright (c) 2019  Dokos SAS
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ const {
 
 const typemap = {
   Data: 'string',
-  Datetime: 'datetime',
+  Datetime: 'string',
   Date: 'string', // for example, 2019-02-28
   'Small Text': 'text',
   'Text Editor': 'text',
@@ -59,7 +60,7 @@ module.exports = {
           key: 'doctype',
           label: 'DocType',
           dynamic: 'doctype.id',
-          helpText: 'Type of the Document you would like to manipulate',
+          helpText: 'Document type you want to manipulate',
           altersDynamicFields: true,
           required: true,
         },
@@ -73,6 +74,9 @@ module.exports = {
         getDocument(z, bundle.inputData.doctype, bundle.inputData.name).then(
           response => addId(response)
         ),
+      sample: {
+        id: 'John Doe',
+      },
     },
   },
   /******************************************************
@@ -80,6 +84,7 @@ module.exports = {
    ******************************************************/
   list: {
     display: {
+      hidden: true,
       label: `List Documents`,
       description: `Get a list of Documents.`,
     },
@@ -88,7 +93,7 @@ module.exports = {
         {
           key: 'doctype',
           label: 'DocType',
-          helpText: 'Type of the Document you would like to manipulate',
+          helpText: 'Document type you want to manipulate',
           dynamic: 'doctype.id',
           required: true,
         },
@@ -101,6 +106,9 @@ module.exports = {
         }).then(response => {
           return response.map(doc => addId(doc));
         }),
+      sample: {
+        id: 'ToDo',
+      },
     },
   },
   /******************************************************
@@ -108,8 +116,9 @@ module.exports = {
    ******************************************************/
   hook: {
     display: {
-      label: `New Document`,
-      description: `Triggers when a new Document is created.`,
+      important: true,
+      label: `Document events`,
+      description: `Triggers when document events are generated.`,
     },
     operation: {
       type: 'hook',
@@ -121,7 +130,7 @@ module.exports = {
           key: 'doctype',
           label: 'DocType',
           dynamic: 'doctype.id',
-          helpText: 'Type of the Document you would like to manipulate',
+          helpText: 'Document type you want to manipulate',
           altersDynamicFields: true,
           required: true,
         },
@@ -129,7 +138,7 @@ module.exports = {
           key: 'triggerEvent',
           required: true,
           label: 'Trigger Event',
-          helpText: 'Which event this should trigger on.',
+          helpText: 'Event triggering the action',
           default: 'after_insert',
           choices: {
             after_insert: 'After insert',
@@ -158,9 +167,12 @@ module.exports = {
             .then(choices => {
               return {
                 key: 'webhookData',
+                label: 'Webhook Data',
                 list: true,
-                helpText: 'The properties you care about, for example "phone".',
-                choices: choices,
+                helpText: 'Properties you want to send to Zapier',
+                choices: Object.assign(choices, {
+                  name: 'Name (Document Name)',
+                }),
               };
             }),
       ],
@@ -209,6 +221,10 @@ module.exports = {
           // Results must be an array
         }).then(response => response.map(doc => addId(doc))),
 
+      sample: {
+        name: 'John Doe',
+      },
+
       // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
       // field definitions. The result will be used to augment the sample.
       // outputFields depends on which data the user requests in the inputField "webhookData"
@@ -226,9 +242,6 @@ module.exports = {
    *                       SEARCH                       *
    ******************************************************/
   search: {
-    /*
-        TO FIX: 404: The requested resource was not found: https://erp.alyf.de/api/resource/Lead/undefined
-      */
     display: {
       label: `Find Document`,
       description: `Finds a Document by searching.`,
@@ -274,6 +287,7 @@ module.exports = {
                   choices: choices,
                   type: 'string',
                   default: 'name',
+                  required: true,
                 },
                 {
                   key: 'filter',
@@ -313,7 +327,7 @@ module.exports = {
       ],
       perform: (z, bundle) => {
         return listDocuments(z, bundle.inputData.doctype, {
-          fields: bundle.inputData.fields,
+          fields: bundle.inputData.fields || ['*'],
           filters: [
             [
               // array inside array because you could apply multiple filters
@@ -325,6 +339,9 @@ module.exports = {
           ],
           limitPageLength: bundle.inputData.limit_page_length,
         }).then(response => response.map(doc => addId(doc)));
+      },
+      sample: {
+        id: 'John Doe',
       },
     },
   },
@@ -381,6 +398,7 @@ module.exports = {
                       key: field.fieldname,
                       label: field.label,
                       choices: field.options.split('\n'),
+                      required: field.reqd,
                     };
                   }
                   if (typemap.hasOwnProperty(field.fieldtype)) {
@@ -388,20 +406,37 @@ module.exports = {
                       key: field.fieldname,
                       label: field.label,
                       type: typemap[field.fieldtype],
+                      required: field.reqd,
                     };
                   }
                   return {
                     key: field.fieldname,
                     label: field.label,
+                    required: field.reqd,
                   };
                 })
           );
         },
       ],
-      perform: (z, bundle) =>
-        postDocument(z, bundle.inputData.doctype, bundle.inputData).then(
-          response => addId(response)
-        ),
+      perform: (z, bundle) => {
+        // Remove arrays for search and create
+        const data = Object.keys(bundle.inputData)
+          .filter(k => {
+            if (!Array.isArray(bundle.inputData[k])) {
+              return k;
+            }
+          })
+          .reduce((obj, key) => {
+            obj[key] = bundle.inputData[key];
+            return obj;
+          }, {});
+        return postDocument(z, bundle.inputData.doctype, data).then(response =>
+          addId(response)
+        );
+      },
+      sample: {
+        id: 'John Doe',
+      },
     },
   },
 };
